@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+<title>Zumastor Summer of Code Ideas</title>
+</head>
+<body>
+
+<h1>Zumastor Summer of Code Ideas</h1>
+
+
+<a href="/"><img  border=0 src="linux1.png" class="floatRight" alt="Zumastor Logo"/></a>
+
+We would love to have a Summer of Code student contribute
+to <a href="/">Zumastor</a>.
+<p>
+Here are a few quick ideas:
+
+<h2>Remove 64 snapshot limit</h2>
+aka <a href="http://code.google.com/p/zumastor/issues/detail?id=6">issue 6</a>.
+<p>
+Language: C<br>
+Skills required: Linux kernel coding<br>
+Difficulty: 2 Months?
+<p>
+Zumastor's <a href="http://code.google.com/p/zumastor/source/browse/trunk/ddsnap/ddsnap.c">ddsnapd.c</a> uses a 64 bit bitmask 
+(e.g. <a href="http://www.google.com/codesearch?q=snapmask+package%3Ahttp%3A%2F%2Fzumastor%5C.googlecode%5C.com&origq=snapmask&btnG=Search+Trunk">search for "snapmask"</a>) 
+internally to say which snapshots a particular block belongs to.
+This limits us to supporting 64 snapshots.  Daniel Phillips has an idea
+for switching to using extents instead of a bitmap, and estimates
+this would take about two months to get working.
+
+<h2>Improve Support for Volume Resizing</h2>
+aka <a href="http://code.google.com/p/zumastor/issues/detail?id=20">issue 20</a>.
+<p>
+Language: C<br>
+Skills required: Userspace coding / Linux kernel coding<br>
+Difficulty: 2 Months?
+<p>
+Part 1, userspace, easy:
+Zumastor, lvm2, and ext3 all have support for offline resizing,
+but they're not integrated together.
+It should be possible to to hook into LVM2's interfaces so offline resize
+of zumastor ext3 volumes can be done with a single lvm command.
+<p>
+Part 2, kernel space, hard:
+The ext3 filesystem and lvm2 both have support for online resizing;
+see e.g.
+<a href="http://jbopensrc.wordpress.com/2007/10/10/growing-a-lvm2-ext3-partition/">this recipe</a> or
+<a href="http://www.causton.net/areca.shtml">this recipe</a>.
+modification.
+It should be relatively straightforward
+to add support to Zumastor for online resizing.
+
+<h2>Easy way for users to access snapshots e.g. in Nautilus</h2>
+aka <a href="http://code.google.com/p/zumastor/issues/detail?id=37">issue 37</a>.
+<p>
+Language: any universally deployed scripting language (bash / perl / python)<br>
+Skills required: moderate scripting<br>
+Difficulty: 2 months
+<p>
+The first part is a simple commandline utility
+that lists the snapshots of a particular directory or file,
+in a way that could be extended to work with
+any kind of snapshot (zumastor, netapp, samba, ...).
+That should only take a couple weeks.
+It should run fine even on systems that do not have Gnome or KDE installed.
+<p>
+The next part is to extend Nautilus and/or Konqueror to let a 
+user right click a file, choose 'Previous Versions', 
+and see the old versions of the file.
+This shouldn't require any C/C++ coding at all.
+There are even tutorials showing how to write plugin scripts
+<a href="http://tech.shantanugoel.com/2008/03/09/ubuntu-tip-extending-nautilus-scripting-your-way-to-ui-bliss.html">for Nautilus</a> and
+<a href="http://developer.kde.org/documentation/tutorials/dot/servicemenus.html">for Konqueror</a>, which should help a lot.
+<p>
+There are already several such snapshot plugins for Nautilus 
+(see e.g. <a href="http://opensolaris.org/os/project/jds/tasks/zfs_nautilus/">here</a>), 
+but they are specific to a single type of snapshot, whereas we
+want to support several.
+<p>
+This part of the idea is also listed <a href="http://techbase.kde.org/index.php?title=Projects/Summer_of_Code/2008/Ideas#Dolphin">on KDE's SoC ideas page</a>.
+(And it should be listed on Gnome's too, probably.)
+</ul>
+
+<h2>Bring up clustered mode (NFS on ocfs2 on ddraid)</h2>
+aka <a href="http://code.google.com/p/zumastor/issues/detail?id=90">issue 90</a>.
+<p>
+Language: C<br>
+Skills required: Linux kernel coding, sysadmin skills<br>
+Difficulty: 2 Months?
+<p>
+We have a clustered mode waiting to go 
+(see the Cluster RAID, Cluster Snapshots, Cluster Block Device documents at 
+http://zumastor.org/), but it hasn't
+gotten any attention because we've been working
+on getting the single-node configuration solid.
+Ripe for a student to swoop in, update it to work with recent kernel, 
+make sure it place nice with ocfs2 and nfs, and benchmark it.
+This is an opportunity to design and code, but it does involve
+a lot of real world testing.
+<p>
+Our clustered mode is implemented in ddraid.c, which is an
+alternative to <a href="http://dbrd.org">dbrd</a>.
+The best filesystem to use on top of it is probably 
+<a href="http://oss.oracle.com/projects/ocfs2/">OCFS2</a>.
+
+<hr>
+<center>&copy; 2008 Google</center>
+</body>
+</html>

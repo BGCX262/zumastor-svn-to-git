@@ -1,0 +1,74 @@
+HOWTO branch for a new zumastor release
+
+Notes so I remember how to do all of this next time.  -dld
+
+
+1) take down the autobuild automation on zumabuild
+ ps aux | grep continuous
+zuabuild  3542  0.0  0.0   7496  1680 ?        S    Jun02   0:00 /bin/sh -x
+/home/zuabuild/continuous-build.sh
+zuabuild  3608  0.0  0.0   7460  1620 ?        S    Jun02   0:00 /bin/sh -x
+/home/zuabuild/continuous-install.sh
+zuabuild  3616  0.0  0.0   7460  1620 ?        S    Jun02   0:00 /bin/sh -x
+/home/zuabuild/continuous-test.sh
+kill 3542
+kill 3608
+kill 3616
+
+
+2) create the new www symlink
+cd ~zbuild/www
+ln -s /home/zuabuild/0.9/zumastor/build 0.9
+
+3) Make the svn branch (inside normal client on desktop)
+svn info https://zumastor.googlecode.com/svn/trunk
+svn cp https://zumastor.googlecode.com/svn/trunk https://zumastor.googlecode.com/svn/branches/0.9
+
+4) Update the revision numbers on trunk
+Version
+zumastor/debian/control
+test/large_volume_copy_test.sh
+svn commit
+
+5) check out the source and tests for 0.9
+su - zuabuild
+cd 0.9
+svn checkout http://zumastor.googlecode.com/svn/branches/0.9/ zumastor
+svn checkout http://zumastor.googlecode.com/svn/branches/0.9/cbtb/tests zumastor-tests
+
+6) move the current trunk builds into 0.9 subdirectory
+cd ~zuabuild
+mv zumastor/build 0.9/zumastor
+
+7) check out my own local 0.9 branch
+cd
+cd code/
+svn co https://zumastor.googlecode.com/svn/branches/0.9 0.9
+cd 0.9
+ls
+cat Version
+
+8) Update and copy the new cbtb launch scripts to zumabuild
+cd ~/code/zumastor
+svn update
+cd cbtb/zumabuild
+edit zuabuild.start
+scp zuabuild.start root@zumabuild:~zuabuild/
+
+cd ~/code/0.9
+svn update
+/cbtb/host-scripts
+scp * root@zumabuild:~zuabuild/0.9/
+
+9) Rebuild trunk base images
+cd zumastor/cbtb/host-setup
+tunbr ./dapper-i386.sh
+mkdir ../../build
+mv dapper-i386-r1697.img ~/zumastor/build
+cd ~/zumastor/build
+ln -s dapper-i386-r1697.img dapper-i386.img
+
+10) Launch continuous build
+slogin root@zumabuild
+/etc/init.d/zuabuild start
+
